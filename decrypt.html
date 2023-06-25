@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decrypt</title>
+
+<!-- FONTS ONLINE -->
+<link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+<!--MAIN STYLE-->
+<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="css/main.css" rel="stylesheet" type="text/css">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/responsive.css" rel="stylesheet" type="text/css">
+<link href="css/animate.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+  function decryptMessage() {
+      var encryptedImage = document.getElementById("encrypted-image").files[0];
+      var decryptionKey = document.getElementById("decryption-key").value;
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+          var img = document.createElement("img");
+          img.onload = function() {
+              var canvas = document.createElement("canvas");
+              canvas.width = img.width;
+              canvas.height = img.height;
+
+              var context = canvas.getContext("2d");
+              context.drawImage(img, 0, 0);
+
+              var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+              var messageData = [];
+              var keyData = decryptionKey.split("").map(function(char) {
+                  return char.charCodeAt(0);
+              });
+
+              var keyIndex = 0;
+              var isEndOfMessage = false;
+              for (var i = 0; i < imageData.data.length; i += 8) {
+                  var charCode = 0;
+                  var key = keyData[keyIndex % keyData.length];
+                  for (var j = 0; j < 8; j++) {
+                      var pixelIndex = i + j;
+                      var pixel = imageData.data[pixelIndex];
+
+                      var bit = pixel & 1;
+                      charCode |= ((bit ^ (key >> j)) & 1) << (7 - j);
+                  }
+                  var character = String.fromCharCode(charCode);
+                  if (character === '.') {
+                      isEndOfMessage = true;
+                      break;
+                  }
+                  messageData.push(character);
+                  keyIndex++;
+              }
+
+              if (isEndOfMessage) {
+                  var decryptedMessage = messageData.join("");
+                  document.getElementById("decrypted-message").textContent = decryptedMessage;
+              }
+          }
+          img.src = e.target.result;
+      }
+      reader.readAsDataURL(encryptedImage);
+  }
+</script>
+
+</head>
+<body>
+
+<!-- Page Wrap -->
+<div id="wrap">
+  <div id="main-wrapper">
+
+  
+    <header class="main-header">
+      <div class="container-fuild">
+        <div class="logo"> <a href="#"> <a href="">⠀</a></div>
+        
+        <!-- Nav -->
+        <nav>
+          <ul id="ownmenu" class="ownmenu">
+            <li class="active"><a href="index.html">HOME</a></li>
+            <li><a href="encrypt.html">ENCRYPT</a></li>
+            <li><a href="decrypt.html"><strong>DECRYPT</a></li>
+            <li><a href="index.html">ABOUT</a></li>
+            <li><a href="index.html">US</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section class="sub-banner">
+      <div class="container">
+        <div class="position-center-center">
+          <h2>decrypt your message</h2>
+        </div>
+      </div>
+    </section>
+    
+    <!--======= how to decrypt =========-->
+    <section class="sectoion-100px services">
+      <div class="container"> 
+        <!-- Tittle -->
+        <div class="tittle">
+          <h4>how to decrypt</h4>
+          <p>Dekripsi adalah proses mengembalikan informasi yang telah dienkripsi menjadi bentuk aslinya yang dapat dibaca atau dimengerti. Ada beberapa langkah untuk melakukan dekripsi data pada website ini, yaitu:</p>
+        </div>
+        
+        <!-- decrypt Row -->
+        <ul class="row">
+          
+          <!-- how to -->
+          <li class="col-md-4">
+            <div class="ser-in margin-bottom-30">
+              <h5>STEP 1</h5>
+              <hr>
+              <p> Masukkan gambar yang sebelumnya telah di enkripsi. </p>
+            </div>
+          </li>
+          
+          <!-- how to -->
+          <li class="col-md-4">
+            <div class="ser-in margin-bottom-30">
+              <h5>STEP 2</h5>
+              <hr>
+              <p> Masukkan keyword atau kata kunci yang digunakan untuk enkripsi agar proses dekripsi bisa dilakukan  . </p>
+            </div>
+          </li>
+          
+          <!-- how to -->
+          <li class="col-md-4 margin-bottom-30">
+            <div class="ser-in">
+              <h5>STEP 3</h5>
+              <hr>
+              <p> Klik button Decode untuk dekripsi pesan, maka hasilnya akan muncul di sebelah kanan halaman. </p>
+            </div>
+          </li>
+          
+        </ul>
+      </div>
+    </section>
+
+    <!--======= input output =========-->
+    <section class="footer-up">
+      <div class="col-sm-6">
+        <div class="work">
+        <a><strong>DECRYPT HERE</strong></a>
+          <form>
+            <br>
+            <label for="encrypted-image">Upload Image</label>
+            <input type="file" id="encrypted-image" accept="image/*" />
+            
+            <br>
+            <label for="decryption-key">Kata Kunci</label> <br>
+            <input class="encrypt-kunci" type="text" id="decryption-key" placeholder="Masukkan kata kunci"> <br>
+            <button type="button" class="btn" onclick="decryptMessage()">decode</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="contact">
+            <a><strong>YOUR MESSAGE</strong></a>
+            <label class="decrypted" for="secret-message">ISI PESAN</label> <br>
+              <textarea class="isipesan" id="decrypted-message" rows="4" cols="70"></textarea>
+            <!-- <div id="decrypted-message"></div> -->
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<!-- Wrap End --> 
+
+<script src="js/jquery-1.11.3.min.js"></script> 
+<script src="js/bootstrap.min.js"></script> 
+<script src="js/own-menu.js"></script> 
+<script src="js/owl.carousel.min.js"></script> 
+<script src="js/jquery.isotope.min.js"></script> 
+<script src="js/counter.js"></script> 
+
+<!-- SLIDER REVOLUTION 4.x SCRIPTS  --> 
+<script type="text/javascript" src="rs-plugin/js/jquery.themepunch.tools.min.js"></script> 
+<script type="text/javascript" src="rs-plugin/js/jquery.themepunch.revolution.min.js"></script> 
+<script src="js/main.js"></script>
+</body>
+</html>
